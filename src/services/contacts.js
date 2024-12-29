@@ -8,5 +8,11 @@ export const addContact = (contactInfo) =>
   ContactCollection.create(contactInfo);
 
 export const patchContact = async (_id, contactInfo) => {
-  await ContactCollection.findOneAndUpdate({ _id }, contactInfo);
+  const data = await ContactCollection.findOneAndUpdate({ _id }, contactInfo, {
+    new: true,
+  });
+  return data;
 };
+
+export const deleteContact = (_id) =>
+  ContactCollection.findOneAndDelete({ _id });
