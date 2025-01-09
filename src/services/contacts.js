@@ -10,6 +10,7 @@ export const addContact = (contactInfo) =>
 export const patchContact = async (_id, contactInfo) => {
   const data = await ContactCollection.findOneAndUpdate({ _id }, contactInfo, {
     new: true,
+    runValidators: true,
   });
   return data;
 };

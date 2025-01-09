@@ -3,24 +3,39 @@ import { Router } from 'express';
 import * as controllers from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
+import { validateBody } from '../utils/validateBody.js';
+import {
+  addContactSchema,
+  updateContactSchema,
+} from '../validation/contacts.js';
+import { isValidId } from '../middlewares/isValidId.js';
+
 const contactsRouter = Router();
 
 contactsRouter.get('/', ctrlWrapper(controllers.getContactsController));
 
 contactsRouter.get(
   '/:contactId',
+  isValidId,
   ctrlWrapper(controllers.getContactByIdController),
 );
 
-contactsRouter.post('/', ctrlWrapper(controllers.addContactController));
+contactsRouter.post(
+  '/',
+  validateBody(addContactSchema),
+  ctrlWrapper(controllers.addContactController),
+);
 
 contactsRouter.patch(
   '/:contactId',
+  isValidId,
+  validateBody(updateContactSchema),
   ctrlWrapper(controllers.patchContactController),
 );
 
 contactsRouter.delete(
   '/:contactId',
+  isValidId,
   ctrlWrapper(controllers.deleteContactController),
 );
 
