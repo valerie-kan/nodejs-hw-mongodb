@@ -19,11 +19,6 @@ export const getContacts = async ({
     contactsQuery.where('isFavourite').equals(filter.isFavourite);
   }
 
-  const data = await contactsQuery
-    .skip(skip)
-    .limit(limit)
-    .sort({ [sortBy]: sortOrder });
-
   const totalItems = await ContactCollection.find()
     .merge(contactsQuery)
     .countDocuments();
@@ -31,6 +26,11 @@ export const getContacts = async ({
   const totalPages = Math.ceil(totalItems / perPage);
   const hasPreviousPage = page > 1;
   const hasNextPage = page < totalPages;
+
+  const data = await contactsQuery
+    .skip(skip)
+    .limit(limit)
+    .sort({ [sortBy]: sortOrder });
 
   return {
     data,
