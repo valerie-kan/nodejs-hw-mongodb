@@ -65,3 +65,7 @@ export const logoutController = async (req, res) => {
 
   res.status(204).send();
 };
+
+// export const verifyController = async (req, res) => {
+//   const { token } = req.query;
+// };

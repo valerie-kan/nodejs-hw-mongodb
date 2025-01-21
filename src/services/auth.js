@@ -1,6 +1,10 @@
 import createError from 'http-errors';
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
+import path from 'path';
+import { readFile } from 'node:fs/promises';
+import Handlebars from 'handlebars';
+import jwt from 'jsonwebtoken';
 
 import UserCollection from '../db/models/User.js';
 import SessionCollection from '../db/models/Session.js';
@@ -8,6 +12,16 @@ import {
   accessTokenLifeTime,
   refreshTokenLifeTime,
 } from '../constants/users.js';
+
+import { TEMPLATES_DIR } from '../constants/index.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { sendEmail } from '../utils/sendEmail.js';
+
+const emailTemplatePath = path.join(TEMPLATES_DIR, 'verify-email.html');
+const emailTemplate = await readFile(emailTemplatePath, 'utf-8');
+
+const appDomain = getEnvVar('APP_DOMAIN');
+const jwtSecret = getEnvVar('JWT_SECRET');
 
 const createNewSession = () => ({
   accessToken: randomBytes(30).toString('base64'),
@@ -30,6 +44,22 @@ export const registerUser = async (userData) => {
     password: hashPassword,
   });
 
+  const template = Handlebars.compile(emailTemplate);
+
+  const token = jwt.sign({ email }, jwtSecret, { expiresIn: '5min' });
+
+  const html = template({
+    link: `${appDomain}/reset-password?token=${token}`,
+  });
+
+  const verifyEmail = {
+    to: email,
+    subject: 'Verify your email',
+    html,
+  };
+
+  await sendEmail(verifyEmail);
+
   return newUser;
 };
 
@@ -38,6 +68,10 @@ export const loginUser = async (userData) => {
   const findedUser = await UserCollection.findOne({ email });
   if (!findedUser) {
     throw createError(401, 'Email or password is wrong');
+  }
+
+  if (!findedUser.verified) {
+    throw createError(401, 'Email is not verified');
   }
 
   const isEqualPasswords = await bcrypt.compare(password, findedUser.password);

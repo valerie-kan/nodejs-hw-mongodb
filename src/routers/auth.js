@@ -8,6 +8,8 @@ import * as controllers from '../controllers/auth.js';
 
 const authRouter = Router();
 
+// authRouter.get('/verify', ctrlWrapper(controllers.verifyController));
+
 authRouter.post(
   '/register',
   validateBody(registerUserSchema),
@@ -19,6 +21,8 @@ authRouter.post(
   validateBody(loginUserSchema),
   ctrlWrapper(controllers.loginController),
 );
+
+// authRouter.post('/send-reset-email');
 
 authRouter.post('/refresh', ctrlWrapper(controllers.refreshController));
 
