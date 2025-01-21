@@ -70,7 +70,7 @@ export const resetPassword = async (email) => {
 
   try {
     return await sendEmail(resetPassword);
-  } catch (error) {
+  } catch {
     throw createError(500, 'Failed to send the email, please try again later.');
   }
 };
