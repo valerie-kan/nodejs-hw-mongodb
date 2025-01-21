@@ -24,6 +24,15 @@ export const registerController = async (req, res) => {
   });
 };
 
+export const resetPasswordController = async (req, res, next) => {
+  await authServices.resetPassword(req.body.email);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+  });
+};
+
 export const loginController = async (req, res) => {
   const session = await authServices.loginUser(req.body);
 
@@ -66,6 +75,6 @@ export const logoutController = async (req, res) => {
   res.status(204).send();
 };
 
-// export const verifyController = async (req, res) => {
-//   const { token } = req.query;
-// };
+export const verifyController = async (req, res) => {
+  // const { token } = req.query;
+};

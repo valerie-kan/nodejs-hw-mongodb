@@ -11,7 +11,7 @@ const SMTP_FROM = getEnvVar('SMTP_FROM');
 const nodemailerConfig = {
   host: SMTP_HOST,
   port: SMTP_PORT,
-  secure: true,
+  secure: false,
   auth: {
     user: SMTP_USER,
     pass: SMTP_PASSWORD,

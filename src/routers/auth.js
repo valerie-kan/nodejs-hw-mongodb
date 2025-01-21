@@ -2,13 +2,15 @@ import { Router } from 'express';
 
 import { validateBody } from '../utils/validateBody.js';
 
-import { loginUserSchema, registerUserSchema } from '../validation/auth.js';
+import {
+  loginUserSchema,
+  registerUserSchema,
+  resetPasswordSchema,
+} from '../validation/auth.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import * as controllers from '../controllers/auth.js';
 
 const authRouter = Router();
-
-// authRouter.get('/verify', ctrlWrapper(controllers.verifyController));
 
 authRouter.post(
   '/register',
@@ -22,7 +24,11 @@ authRouter.post(
   ctrlWrapper(controllers.loginController),
 );
 
-// authRouter.post('/send-reset-email');
+authRouter.post(
+  '/send-reset-email',
+  validateBody(resetPasswordSchema),
+  ctrlWrapper(controllers.resetPasswordController),
+);
 
 authRouter.post('/refresh', ctrlWrapper(controllers.refreshController));
 

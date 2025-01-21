@@ -17,12 +17,6 @@ import { TEMPLATES_DIR } from '../constants/index.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { sendEmail } from '../utils/sendEmail.js';
 
-const emailTemplatePath = path.join(TEMPLATES_DIR, 'verify-email.html');
-const emailTemplate = await readFile(emailTemplatePath, 'utf-8');
-
-const appDomain = getEnvVar('APP_DOMAIN');
-const jwtSecret = getEnvVar('JWT_SECRET');
-
 const createNewSession = () => ({
   accessToken: randomBytes(30).toString('base64'),
   refreshToken: randomBytes(30).toString('base64'),
@@ -44,23 +38,41 @@ export const registerUser = async (userData) => {
     password: hashPassword,
   });
 
+  return newUser;
+};
+
+const emailTemplatePath = path.join(TEMPLATES_DIR, 'reset-password.html');
+const emailTemplate = await readFile(emailTemplatePath, 'utf-8');
+
+const appDomain = getEnvVar('APP_DOMAIN');
+const jwtSecret = getEnvVar('JWT_SECRET');
+
+export const resetPassword = async (email) => {
+  const user = await UserCollection.findOne({ email });
+  if (!user) {
+    throw createError(404, 'User not found!');
+  }
+
   const template = Handlebars.compile(emailTemplate);
 
   const token = jwt.sign({ email }, jwtSecret, { expiresIn: '5min' });
 
   const html = template({
+    name: user.name,
     link: `${appDomain}/reset-password?token=${token}`,
   });
 
-  const verifyEmail = {
+  const resetPassword = {
     to: email,
-    subject: 'Verify your email',
+    subject: 'Reset your password',
     html,
   };
 
-  await sendEmail(verifyEmail);
-
-  return newUser;
+  try {
+    return await sendEmail(resetPassword);
+  } catch (error) {
+    throw createError(500, 'Failed to send the email, please try again later.');
+  }
 };
 
 export const loginUser = async (userData) => {
@@ -68,10 +80,6 @@ export const loginUser = async (userData) => {
   const findedUser = await UserCollection.findOne({ email });
   if (!findedUser) {
     throw createError(401, 'Email or password is wrong');
-  }
-
-  if (!findedUser.verified) {
-    throw createError(401, 'Email is not verified');
   }
 
   const isEqualPasswords = await bcrypt.compare(password, findedUser.password);
