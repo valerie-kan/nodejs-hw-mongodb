@@ -1,9 +1,9 @@
 import { Router } from 'express';
 
-import * as controllers from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-
 import { validateBody } from '../utils/validateBody.js';
+
+import * as controllers from '../controllers/contacts.js';
 import {
   addContactSchema,
   updateContactSchema,
@@ -11,6 +11,7 @@ import {
 
 import { isValidId } from '../middlewares/isValidId.js';
 import { authenticate } from '../middlewares/authenticate.js';
+import { upload } from '../middlewares/upload.js';
 
 const contactsRouter = Router();
 
@@ -26,12 +27,14 @@ contactsRouter.get(
 
 contactsRouter.post(
   '/',
+  upload.single('photo'),
   validateBody(addContactSchema),
   ctrlWrapper(controllers.addContactController),
 );
 
 contactsRouter.patch(
   '/:contactId',
+  upload.single('photo'),
   isValidId,
   validateBody(updateContactSchema),
   ctrlWrapper(controllers.patchContactController),

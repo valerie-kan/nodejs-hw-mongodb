@@ -4,6 +4,7 @@ import * as contactServices from '../services/contacts.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseContactsFilter } from '../utils/filters/parseContactsFilter.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -43,8 +44,12 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const addContactController = async (req, res) => {
+  let photo;
+  if (req.file) {
+    photo = await saveFileToCloudinary(req.file);
+  }
   const userId = req.user._id;
-  const data = await contactServices.addContact({ ...req.body, userId });
+  const data = await contactServices.addContact({ ...req.body, userId, photo });
 
   res.status(201).json({
     status: 201,
@@ -54,9 +59,16 @@ export const addContactController = async (req, res) => {
 };
 
 export const patchContactController = async (req, res) => {
+  let photo;
+  if (req.file) {
+    photo = await saveFileToCloudinary(req.file);
+  }
   const userId = req.user._id;
   const { contactId: _id } = req.params;
-  const data = await contactServices.patchContact({ _id, userId }, req.body);
+  const data = await contactServices.patchContact(
+    { _id, userId },
+    { ...req.body, photo },
+  );
 
   if (!data) {
     throw createError(404, 'Contact not found');
