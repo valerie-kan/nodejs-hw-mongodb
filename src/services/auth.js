@@ -47,7 +47,7 @@ const emailTemplate = await readFile(emailTemplatePath, 'utf-8');
 const appDomain = getEnvVar('APP_DOMAIN');
 const jwtSecret = getEnvVar('JWT_SECRET');
 
-export const resetPassword = async (email) => {
+export const sendResetEmail = async (email) => {
   const user = await UserCollection.findOne({ email });
   if (!user) {
     throw createError(404, 'User not found!');
@@ -62,17 +62,42 @@ export const resetPassword = async (email) => {
     link: `${appDomain}/reset-password?token=${token}`,
   });
 
-  const resetPassword = {
+  const emailInfo = {
     to: email,
     subject: 'Reset your password',
     html,
   };
 
   try {
-    return await sendEmail(resetPassword);
+    await sendEmail(emailInfo);
   } catch {
     throw createError(500, 'Failed to send the email, please try again later.');
   }
+};
+
+export const resetPassword = async (payload) => {
+  let userInfo;
+  try {
+    userInfo = jwt.verify(payload.token, jwtSecret);
+  } catch {
+    throw createError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await UserCollection.findOne({ email: userInfo.email });
+  if (!user) {
+    throw createError(404, 'User not found!');
+  }
+
+  await SessionCollection.deleteOne({ userId: user._id });
+
+  const hashPassword = await bcrypt.hash(payload.password, 10);
+
+  const updatedUser = await UserCollection.findOneAndUpdate({
+    _id: user._id,
+    password: hashPassword,
+  });
+
+  return updatedUser;
 };
 
 export const loginUser = async (userData) => {
