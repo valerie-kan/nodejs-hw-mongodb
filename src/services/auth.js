@@ -59,7 +59,7 @@ export const sendResetEmail = async (email) => {
 
   const html = template({
     name: user.name,
-    link: `${appDomain}/reset-password?token=${token}`,
+    link: `${appDomain}/reset-pwd?token=${token}`,
   });
 
   const emailInfo = {
