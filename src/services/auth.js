@@ -92,10 +92,12 @@ export const resetPassword = async (payload) => {
 
   const hashPassword = await bcrypt.hash(payload.password, 10);
 
-  const updatedUser = await UserCollection.findOneAndUpdate({
-    _id: user._id,
-    password: hashPassword,
-  });
+  const updatedUser = await UserCollection.findOneAndUpdate(
+    {
+      _id: user._id,
+    },
+    { password: hashPassword },
+  );
 
   return updatedUser;
 };
