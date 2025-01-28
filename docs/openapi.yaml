@@ -10,7 +10,7 @@ tags:
   - name: Contacts
     description: Operations about contacts
 servers:
-  - url: http://localhost:4000
+  - url: http://localhost:3000
   - url: https://swagger.onrender.com
 paths:
   /contacts:
@@ -23,6 +23,26 @@ paths:
       $ref: ../swagger/paths/contacts/{id}/get.yaml
     patch:
       $ref: ../swagger/paths/contacts/{id}/patch.yaml
+    delete:
+      $ref: ../swagger/paths/contacts/{id}/delete.yaml
+  /auth/register:
+    post:
+      $ref: '../swagger/paths/auth/post/register.yaml'
+  /auth/login:
+    post:
+      $ref: '../swagger/paths/auth/post/login.yaml'
+  /auth/send-reset-email:
+    post:
+      $ref: '../swagger/paths/auth/post/sendResetEmail.yaml'
+  /auth/reset-pwd:
+    post:
+      $ref: '../swagger/paths/auth/post/resetPwd.yaml'
+  /auth/refresh:
+    post:
+      $ref: '../swagger/paths/auth/post/refresh.yaml'
+  /auth/logout:
+    post:
+      $ref: '../swagger/paths/auth/post/logout.yaml'
 components:
   securitySchemes:
     bearerAuth:

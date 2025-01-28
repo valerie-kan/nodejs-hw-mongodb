@@ -37,7 +37,7 @@ parameters:
     name: isFavourite
     schema:
       type: boolean
-      example: true
+      example: false
 responses:
   '200':
     description: Successfully found contacts!

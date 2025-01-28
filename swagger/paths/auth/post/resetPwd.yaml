@@ -1,0 +1,66 @@
+tags:
+  - Auth
+summary: Reset password
+operationId: resetPassword
+description: Reset password
+security:
+  - bearerAuth: []
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - token
+          - password
+        properties:
+          token:
+            description: jwtToken
+            type: string
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBvZm9jZWQyNTBAYW5kaW5ld3MuY29tIiwiaWF0IjoxNzM4MDY0Njg3LCJleHAiOjE3MzgwNjQ5ODd9.C9ToZg6Dmjrg2_XcrRT0wEfr_dwFFjkcgHZvYQn3GSg'
+          password:
+            description: User's password
+            type: string
+            example: '2456dgt8'
+responses:
+  '200':
+    description: Password is reset
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Password has been successfully reset'
+  '401':
+    description: Unauthorized error
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: UnauthorizedError
+            data:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  example: 'JWT token expired'

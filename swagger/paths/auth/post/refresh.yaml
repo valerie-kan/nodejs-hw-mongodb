@@ -1,0 +1,64 @@
+tags:
+  - Auth
+summary: Refresh user
+operationId: refreshUser
+description: Refresh user
+security:
+  - bearerAuth: []
+parameters:
+  - in: cookie
+    name: refreshToken
+    required: true
+    description: Refresh token
+    schema:
+      type: string
+      example: 'bXU7jKKY7x%2BpKV2EMktXdOqo2E3YHuUuAhcdX0On'
+  - in: cookie
+    name: sessionId
+    required: true
+    description: Session id
+    schema:
+      type: string
+      example: 'j%3A%226798ce47fab2545afd35e85e%22'
+responses:
+  '200':
+    description: User is refreshed
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: 'Successfully refreshed a session!'
+            data:
+              type: object
+              required:
+                - accessToken
+              properties:
+                accessToken:
+                  type: string
+                  example: '30t0UrtbHy3asHxUDMkboqizEo2R9m7kyEwfVuLS'
+  '401':
+    description: Unauthorized error
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: 'Session not found'
