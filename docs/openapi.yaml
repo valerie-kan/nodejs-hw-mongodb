@@ -9,6 +9,8 @@ info:
 tags:
   - name: Contacts
     description: Operations about contacts
+  - name: Auth
+    description: Operations about authorization and authentication
 servers:
   - url: http://localhost:3000
   - url: https://swagger-drcf.onrender.com
@@ -48,3 +50,11 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: refreshToken
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: sessionId

@@ -14,13 +14,17 @@
       "url": "http://localhost:3000"
     },
     {
-      "url": "https://swagger.onrender.com"
+      "url": "https://swagger-drcf.onrender.com"
     }
   ],
   "tags": [
     {
       "name": "Contacts",
       "description": "Operations about contacts"
+    },
+    {
+      "name": "Auth",
+      "description": "Operations about authorization and authentication"
     }
   ],
   "paths": {
@@ -864,7 +868,8 @@
         "description": "Refresh user",
         "security": [
           {
-            "bearerAuth": []
+            "cookieAuth": [],
+            "sessionAuth": []
           }
         ],
         "parameters": [
@@ -964,7 +969,7 @@
         "description": "Logout user",
         "security": [
           {
-            "bearerAuth": []
+            "cookieAuth": []
           }
         ],
         "parameters": [
@@ -994,6 +999,16 @@
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer"
+      },
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "refreshToken"
+      },
+      "sessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionId"
       }
     },
     "schemas": {

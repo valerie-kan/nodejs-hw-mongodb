@@ -4,7 +4,8 @@ summary: Refresh user
 operationId: refreshUser
 description: Refresh user
 security:
-  - bearerAuth: []
+  - cookieAuth: []
+    sessionAuth: []
 parameters:
   - in: cookie
     name: refreshToken

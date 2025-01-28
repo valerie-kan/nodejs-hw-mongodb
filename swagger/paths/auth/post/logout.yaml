@@ -4,7 +4,7 @@ summary: Logout user
 operationId: logoutUser
 description: 'Logout user'
 security:
-  - bearerAuth: []
+  - cookieAuth: []
 parameters:
   - in: cookie
     name: sessionId
